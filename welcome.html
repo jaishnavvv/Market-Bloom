@@ -6,34 +6,32 @@
   <title>Welcome - Market Bloom</title>
   <style>
     /* Loader */
-   /* Full-page overlay loader */
-#loader {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: white; /* hides everything underneath */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
+    #loader {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: white; /* hides everything underneath */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
 
-.spinner-inner {
-  border: 8px solid #f3f3f3;
-  border-top: 8px solid #4CAF50;
-  border-radius: 50%;
-  width: 60px;
-  height: 60px;
-  animation: spin 1s linear infinite;
-}
+    .spinner-inner {
+      border: 8px solid #f3f3f3;
+      border-top: 8px solid #4CAF50;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 1s linear infinite;
+    }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
 
     /* Hide content initially */
     #welcome-content {
@@ -41,18 +39,6 @@
       text-align: center;
       margin-top: 50px;
       font-family: Arial, sans-serif;
-    }
-
-    #extra-content {
-      display: none;
-      margin-top: 30px;
-      text-align: center;
-      animation: fadeIn 1s ease-in;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
     }
 
     /* Logo */
@@ -81,44 +67,30 @@
 
   <!-- Loader -->
   <div id="loader">
-  <div class="spinner-inner"></div>
-</div>
+    <div class="spinner-inner"></div>
+  </div>
 
   <!-- Welcome Content -->
   <div id="welcome-content">
     <img id="logo" src="logo.png" alt="Market Bloom Logo">
     <h1>Welcome to Market Bloom!</h1>
     <p>Your marketplace, simplified.</p>
-    <button onclick="showExtraContent()">Go to Home page</button>
-  </div>
-
-  <!-- Extra Content (expanded dashboard) -->
-  <div id="extra-content">
-    <h2>Start Exploring!</h2>
-    <p>Here’s what you can do:</p>
-    <ul>
-      <li>Browse Products</li>
-      <li>Start Posting as a Seller</li>
-      <li>View Categories</li>
-    </ul>
+    <!-- ✅ Button now redirects -->
+    <button onclick="goToHome()">Go to Home page</button>
   </div>
 
   <!-- JS -->
   <script>
-   window.addEventListener('load', function() {
-    setTimeout(() => {
-        // hide the loader overlay
+    window.addEventListener('load', function() {
+      setTimeout(() => {
         document.getElementById('loader').style.display = 'none';
-        // show welcome content
         document.getElementById('welcome-content').style.display = 'block';
-    }, 1500);
-});
+      }, 1500);
+    });
 
-
-    function showExtraContent() {
-      document.getElementById('extra-content').style.display = 'block';
-      // Scroll to the new section smoothly
-      document.getElementById('extra-content').scrollIntoView({ behavior: 'smooth' });
+    // Redirect function
+    function goToHome() {
+      window.location.href = "index.html"; // ✅ redirect to homepage
     }
   </script>
 
