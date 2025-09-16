@@ -21,13 +21,15 @@
   <div class="form-container text-center">
     <img src="logo.png" alt="Market Bloom Logo" class="logo-small">
     <h3 class="mb-3">Seller Signup</h3>
-    <form>
-      <div class="mb-3"><input type="text" class="form-control" placeholder="Business Name" required></div>
-      <div class="mb-3"><input type="email" class="form-control" placeholder="Email" required></div>
-      <div class="mb-3"><input type="password" class="form-control" placeholder="Password" required></div>
-      <button type="submit" class="btn btn-custom">Sign Up</button>
-      <a href="seller-login.html" class="btn btn-outline-success w-100 mt-2">Already have an account? Login</a>
+   <form onsubmit="event.preventDefault(); window.location.href='welcome.html';">
+  <input type="text" class="form-control mb-3" placeholder="Full Name" required>
+  <input type="email" class="form-control mb-3" placeholder="Email" required>
+  <input type="password" class="form-control mb-3" placeholder="Password" required>
+  <input type="password" class="form-control mb-3" placeholder="Confirm Password" required>
+  <button type="submit" class="btn btn-primary w-100">Sign Up</button>
+  <a href="seller-login.html" class="btn btn-outline-success w-100 mt-2">Already have an account? Login</a>
     </form>
   </div>
 </body>
 </html>
+
