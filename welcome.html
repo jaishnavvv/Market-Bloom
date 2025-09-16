@@ -11,8 +11,8 @@
       left: 50%;
       top: 50%;
       transform: translate(-50%, -50%);
-      border: 8px solid #f3f3f3; /* Light grey */
-      border-top: 8px solid #4CAF50; /* Green */
+      border: 8px solid #f3f3f3;
+      border-top: 8px solid #4CAF50;
       border-radius: 50%;
       width: 60px;
       height: 60px;
@@ -33,12 +33,10 @@
       font-family: Arial, sans-serif;
     }
 
-    /* Show content after loading */
-    body.loaded #loader {
+    #extra-content {
       display: none;
-    }
-    body.loaded #welcome-content {
-      display: block;
+      margin-top: 30px;
+      text-align: center;
       animation: fadeIn 1s ease-in;
     }
 
@@ -79,22 +77,35 @@
     <img id="logo" src="logo.png" alt="Market Bloom Logo">
     <h1>Welcome to Market Bloom!</h1>
     <p>Your marketplace, simplified.</p>
-    <button onclick="goToDashboard()">Go to Dashboard</button>
+    <button onclick="showExtraContent()">Go to Dashboard</button>
+  </div>
+
+  <!-- Extra Content (expanded dashboard) -->
+  <div id="extra-content">
+    <h2>Start Exploring!</h2>
+    <p>Here’s what you can do:</p>
+    <ul>
+      <li>Browse Products</li>
+      <li>Start Posting as a Seller</li>
+      <li>View Categories</li>
+    </ul>
   </div>
 
   <!-- JS -->
   <script>
     window.addEventListener('load', function() {
-      // Simulate loading delay
       setTimeout(() => {
         document.body.classList.add('loaded');
-      }, 1500); // 1.5 seconds delay
+        document.getElementById('welcome-content').style.display = 'block';
+      }, 1500);
     });
 
-    function goToDashboard() {
-      window.location.href = "dashboard.html"; // redirect to your main page
+    function showExtraContent() {
+      document.getElementById('extra-content').style.display = 'block';
+      // Scroll to the new section smoothly
+      document.getElementById('extra-content').scrollIntoView({ behavior: 'smooth' });
     }
   </script>
-  
+
 </body>
 </html>
