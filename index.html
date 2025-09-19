@@ -133,16 +133,13 @@
   </div>
 
   <script>
-    // --- Simulate login using localStorage ---
-    // Suppose buyer data gets saved after login/signup
-    // Example: localStorage.setItem("buyer", JSON.stringify({name: "Rajesh", email: "rajesh@mail.com"}));
-
+    // --- Load logged-in user (buyer or seller) ---
     function loadUser() {
-      let buyer = JSON.parse(localStorage.getItem("buyer"));
       const userSection = document.getElementById("userSection");
+      const buyer = JSON.parse(localStorage.getItem("buyer"));
+      const seller = JSON.parse(localStorage.getItem("seller"));
 
       if (buyer) {
-        // Show profile instead of login
         userSection.innerHTML = `
           <div class="profile-dropdown">
             <span class="profile-btn">👤 ${buyer.name}</span>
@@ -153,14 +150,25 @@
             </div>
           </div>
         `;
+      } else if (seller) {
+        userSection.innerHTML = `
+          <div class="profile-dropdown">
+            <span class="profile-btn">🏬 ${seller.shopName}</span>
+            <div class="profile-content">
+              <p><b>Shop Name:</b> ${seller.shopName}</p>
+              <p><b>Email:</b> ${seller.email}</p>
+              <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+          </div>
+        `;
       } else {
-        // Default login button
         userSection.innerHTML = `<a href="logindirec.html" class="login-btn">Login / Sign Up</a>`;
       }
     }
 
     function logout() {
       localStorage.removeItem("buyer");
+      localStorage.removeItem("seller");
       loadUser();
     }
 
@@ -168,11 +176,9 @@
 
     // --- Search Filter ---
     document.getElementById("searchBox").addEventListener("keyup", function() {
-      let filter = this.value.toLowerCase();
-      let shops = document.querySelectorAll(".shop-card");
-      shops.forEach(shop => {
-        let text = shop.innerText.toLowerCase();
-        shop.style.display = text.includes(filter) ? "" : "none";
+      const filter = this.value.toLowerCase();
+      document.querySelectorAll(".shop-card").forEach(shop => {
+        shop.style.display = shop.innerText.toLowerCase().includes(filter) ? "" : "none";
       });
     });
   </script>
