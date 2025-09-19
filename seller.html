@@ -1,136 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Seller Dashboard - Market Bloom</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 0; background-color: #f0fff0; }
-    header { background-color: #2d6a4f; color: white; padding: 15px; text-align: center; }
-    header img { height: 40px; vertical-align: middle; }
-    header span { font-size: 22px; margin-left: 10px; vertical-align: middle; }
-    .container { padding: 20px; max-width: 600px; margin: auto; background: white; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-top: 20px; }
-    input, select, button { width: 100%; padding: 10px; margin: 8px 0; border-radius: 5px; border: 1px solid #ccc; }
-    button { background-color: #4CAF50; color: white; border: none; cursor: pointer; }
-    button:hover { background-color: #45a049; }
-    .product-list { margin-top: 10px; }
-    .product-item { background: #e6f9e6; padding: 10px; margin: 5px 0; border-radius: 5px; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seller Dashboard - Market Bloom</title>
+<style>
+body { font-family: Arial, sans-serif; background-color: #f0fff0; margin: 0; padding: 0; }
+.container { max-width: 600px; margin: 50px auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+h2 { text-align: center; color: #2d6a4f; }
+input, select { width: 100%; padding: 10px; margin: 8px 0; border-radius: 5px; border: 1px solid #ccc; }
+button { padding: 10px 20px; background-color: #2d6a4f; color: white; border: none; border-radius: 5px; cursor: pointer; width: 100%; }
+button:hover { background-color: #256a45; }
+.product-item { display: flex; gap: 10px; margin-bottom: 8px; }
+.product-item input, .product-item select { flex: 1; }
+</style>
 </head>
 <body>
 
-<header>
-  <img src="logo.png" alt="Market Bloom Logo">
-  <span>Market Bloom - Seller Dashboard</span>
-</header>
+<div class="container">
+<h2>Seller Dashboard</h2>
 
-<div class="container" id="loginSection">
-  <h2>Seller Login / Sign Up</h2>
-  <input type="text" id="sellerName" placeholder="Your Name" required>
-  <input type="email" id="sellerEmail" placeholder="Your Email" required>
-  <button onclick="sellerLogin()">Login / Sign Up</button>
-</div>
+<input type="text" id="shopName" placeholder="Shop Name">
+<input type="text" id="sellerName" placeholder="Your Name">
+<input type="text" id="location" placeholder="Location">
+<input type="email" id="email" placeholder="Email">
+<input type="password" id="password" placeholder="Password">
 
-<div class="container" id="sellerDashboard" style="display:none;">
-  <h2>Shop Details</h2>
-  <input type="text" id="shopName" placeholder="Shop Name" required>
-  <input type="text" id="shopLocation" placeholder="Shop Location" required>
-
-  <h3>Products</h3>
-  <input type="text" id="productName" placeholder="Product Name">
-  <select id="productType">
-    <option value="Flower">Flower</option>
-    <option value="Fruit">Fruit</option>
-  </select>
-  <input type="number" id="productPrice" placeholder="Price">
-  <button onclick="addProduct()">Add Product</button>
-
-  <div class="product-list" id="productList"></div>
-  <button onclick="saveShop()">Save Shop Details</button>
-  <button style="background:#e63946;" onclick="logout()">Logout</button>
+<h3>Products</h3>
+<div id="productsContainer"></div>
+<button type="button" onclick="addProduct()">+ Add Product</button>
+<br><br>
+<button onclick="saveSeller()">Save / Update</button>
 </div>
 
 <script>
-  function sellerLogin() {
-    const name = document.getElementById("sellerName").value.trim();
-    const email = document.getElementById("sellerEmail").value.trim();
-    if(!name || !email) { alert("Enter name & email"); return; }
+function addProduct(name='', type='Flower', price='') {
+  const container = document.getElementById('productsContainer');
+  const div = document.createElement('div');
+  div.className = 'product-item';
+  div.innerHTML = `
+    <input type="text" placeholder="Product Name" value="${name}">
+    <select>
+      <option value="Flower" ${type==='Flower'?'selected':''}>Flower</option>
+      <option value="Fruit" ${type==='Fruit'?'selected':''}>Fruit</option>
+    </select>
+    <input type="number" placeholder="Price" value="${price}">
+    <button type="button" onclick="removeProduct(this)">❌</button>
+  `;
+  container.appendChild(div);
+}
 
-    const sellerData = JSON.parse(localStorage.getItem("seller")) || {};
-    sellerData.name = name;
-    sellerData.email = email;
-    if(!sellerData.products) sellerData.products = [];
+function removeProduct(button) {
+  button.parentElement.remove();
+}
 
-    localStorage.setItem("seller", JSON.stringify(sellerData));
-    loadDashboard();
+function saveSeller() {
+  const shopName = document.getElementById('shopName').value.trim();
+  const sellerName = document.getElementById('sellerName').value.trim();
+  const location = document.getElementById('location').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+
+  if (!shopName || !sellerName || !location || !email) {
+    alert("Please fill all required fields.");
+    return;
   }
 
-  function loadDashboard() {
-    const seller = JSON.parse(localStorage.getItem("seller"));
-    if(!seller) return;
+  const productDivs = document.querySelectorAll('#productsContainer .product-item');
+  const sellerProducts = [];
+  productDivs.forEach(div => {
+    const name = div.children[0].value.trim();
+    const type = div.children[1].value;
+    const price = div.children[2].value;
+    if(name && price) sellerProducts.push({name,type,price});
+  });
 
-    document.getElementById("loginSection").style.display = "none";
-    document.getElementById("sellerDashboard").style.display = "block";
+  const sellerData = { shopName, sellerName, location, email, password, products: sellerProducts };
+  localStorage.setItem('seller', JSON.stringify(sellerData));
 
-    document.getElementById("shopName").value = seller.shopName || "";
-    document.getElementById("shopLocation").value = seller.location || "";
-
-    renderProducts();
+  alert("Seller data saved!");
+}
+  
+// Load existing data
+window.addEventListener('load', ()=>{
+  const seller = JSON.parse(localStorage.getItem('seller'));
+  if(seller) {
+    document.getElementById('shopName').value = seller.shopName;
+    document.getElementById('sellerName').value = seller.sellerName;
+    document.getElementById('location').value = seller.location;
+    document.getElementById('email').value = seller.email;
+    document.getElementById('password').value = seller.password || '';
+    seller.products.forEach(p=>addProduct(p.name,p.type,p.price));
   }
-
-  function addProduct() {
-    const name = document.getElementById("productName").value.trim();
-    const type = document.getElementById("productType").value;
-    const price = document.getElementById("productPrice").value.trim();
-
-    if(!name || !price) { alert("Enter product name & price"); return; }
-
-    const seller = JSON.parse(localStorage.getItem("seller"));
-    if(!seller.products) seller.products = [];
-    seller.products.push({ name, type, price });
-    localStorage.setItem("seller", JSON.stringify(seller));
-
-    renderProducts();
-    document.getElementById("productName").value = "";
-    document.getElementById("productPrice").value = "";
-  }
-
-  function renderProducts() {
-    const seller = JSON.parse(localStorage.getItem("seller"));
-    const listDiv = document.getElementById("productList");
-    listDiv.innerHTML = "";
-    if(!seller.products) return;
-    seller.products.forEach((p, idx) => {
-      const div = document.createElement("div");
-      div.className = "product-item";
-      div.innerHTML = `${p.type} - ${p.name}: ₹${p.price} <button onclick="removeProduct(${idx})" style="float:right;background:#e63946;color:white;padding:2px 6px;border:none;border-radius:3px;cursor:pointer;">X</button>`;
-      listDiv.appendChild(div);
-    });
-  }
-
-  function removeProduct(index) {
-    const seller = JSON.parse(localStorage.getItem("seller"));
-    seller.products.splice(index, 1);
-    localStorage.setItem("seller", JSON.stringify(seller));
-    renderProducts();
-  }
-
-  function saveShop() {
-    const seller = JSON.parse(localStorage.getItem("seller"));
-    seller.shopName = document.getElementById("shopName").value.trim();
-    seller.location = document.getElementById("shopLocation").value.trim();
-    localStorage.setItem("seller", JSON.stringify(seller));
-    alert("Shop details updated! Buyers will see the changes live.");
-  }
-
-  function logout() {
-    localStorage.removeItem("seller");
-    location.reload();
-  }
-
-  // On page load, show dashboard if seller already logged in
-  window.onload = loadDashboard;
+});
 </script>
-
 </body>
 </html>
