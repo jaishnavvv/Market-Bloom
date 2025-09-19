@@ -3,116 +3,113 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login / Sign Up - Market Bloom</title>
+  <title>Market Bloom - Login / Sign Up</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #e6f9e6;
-      margin: 0;
-      padding: 0;
-    }
-    .container {
-      max-width: 500px;
-      margin: 50px auto;
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    }
-    h2 {
-      text-align: center;
-      color: #2d6a4f;
-    }
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-    input {
-      padding: 10px;
-      font-size: 16px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-    }
-    button {
-      padding: 10px;
-      font-size: 16px;
-      background-color: #2d6a4f;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #1b4332;
-    }
-    .toggle-btns {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 20px;
-      gap: 10px;
-    }
-    .toggle-btns button {
-      background-color: #4CAF50;
-      font-weight: bold;
-    }
-    .toggle-btns button.active {
-      background-color: #2d6a4f;
-    }
+    body { font-family: Arial, sans-serif; margin: 0; background-color: #e6f9e6; }
+    .container { max-width: 400px; margin: 50px auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    h2 { text-align: center; color: #2d6a4f; }
+    label { display: block; margin: 10px 0 5px; }
+    input { width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: 1px solid #ccc; }
+    button { width: 100%; padding: 10px; background: #2d6a4f; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+    button:hover { background: #276747; }
+    .toggle-btn { text-align: center; margin-top: 10px; cursor: pointer; color: #2d6a4f; text-decoration: underline; }
+    .hidden { display: none; }
   </style>
 </head>
 <body>
   <div class="container">
     <h2 id="formTitle">Buyer Login / Sign Up</h2>
 
-    <div class="toggle-btns">
-      <button id="buyerBtn" class="active">Buyer</button>
-      <button id="sellerBtn">Seller</button>
+    <!-- Buyer Form -->
+    <div id="buyerForm">
+      <label>Name</label>
+      <input type="text" id="buyerName" required>
+      <label>Email</label>
+      <input type="email" id="buyerEmail" required>
+      <label>Password</label>
+      <input type="password" id="buyerPassword" required>
+      <label>Confirm Password</label>
+      <input type="password" id="buyerConfirmPassword" required>
+      <button onclick="buyerSignup()">Sign Up / Login</button>
+      <div class="toggle-btn" onclick="toggleForm()">Switch to Seller</div>
     </div>
 
-    <form id="loginForm">
-      <input type="text" id="name" placeholder="Your Name / Shop Name" required>
-      <input type="email" id="email" placeholder="Email" required>
-      <button type="submit">Submit</button>
-    </form>
+    <!-- Seller Form -->
+    <div id="sellerForm" class="hidden">
+      <label>Shop Name</label>
+      <input type="text" id="sellerShopName" required>
+      <label>Location</label>
+      <input type="text" id="sellerLocation" required>
+      <label>Email</label>
+      <input type="email" id="sellerEmail" required>
+      <label>Password</label>
+      <input type="password" id="sellerPassword" required>
+      <label>Confirm Password</label>
+      <input type="password" id="sellerConfirmPassword" required>
+      <button onclick="sellerSignup()">Sign Up / Login</button>
+      <div class="toggle-btn" onclick="toggleForm()">Switch to Buyer</div>
+    </div>
   </div>
 
   <script>
-    const buyerBtn = document.getElementById("buyerBtn");
-    const sellerBtn = document.getElementById("sellerBtn");
-    const formTitle = document.getElementById("formTitle");
-    const loginForm = document.getElementById("loginForm");
-    let userType = "buyer"; // default
+    function toggleForm() {
+      const buyerForm = document.getElementById("buyerForm");
+      const sellerForm = document.getElementById("sellerForm");
+      const title = document.getElementById("formTitle");
 
-    buyerBtn.addEventListener("click", () => {
-      userType = "buyer";
-      formTitle.textContent = "Buyer Login / Sign Up";
-      buyerBtn.classList.add("active");
-      sellerBtn.classList.remove("active");
-    });
-
-    sellerBtn.addEventListener("click", () => {
-      userType = "seller";
-      formTitle.textContent = "Seller Login / Sign Up";
-      sellerBtn.classList.add("active");
-      buyerBtn.classList.remove("active");
-    });
-
-    loginForm.addEventListener("submit", function(event) {
-      event.preventDefault();
-
-      const name = document.getElementById("name").value;
-      const email = document.getElementById("email").value;
-
-      if(userType === "buyer") {
-        localStorage.setItem("buyer", JSON.stringify({ name, email }));
+      if (buyerForm.classList.contains("hidden")) {
+        buyerForm.classList.remove("hidden");
+        sellerForm.classList.add("hidden");
+        title.textContent = "Buyer Login / Sign Up";
       } else {
-        localStorage.setItem("seller", JSON.stringify({ shopName: name, email }));
+        buyerForm.classList.add("hidden");
+        sellerForm.classList.remove("hidden");
+        title.textContent = "Seller Login / Sign Up";
+      }
+    }
+
+    function buyerSignup() {
+      const name = document.getElementById("buyerName").value.trim();
+      const email = document.getElementById("buyerEmail").value.trim();
+      const password = document.getElementById("buyerPassword").value;
+      const confirmPassword = document.getElementById("buyerConfirmPassword").value;
+
+      if (!name || !email || !password || !confirmPassword) {
+        alert("Please fill all fields.");
+        return;
+      }
+      if (password !== confirmPassword) {
+        alert("Passwords do not match!");
+        return;
       }
 
-      // Redirect back to homepage
+      const buyer = { name, email, password };
+      localStorage.setItem("buyer", JSON.stringify(buyer));
+      alert("Buyer signed up successfully!");
       window.location.href = "index.html";
-    });
+    }
+
+    function sellerSignup() {
+      const shopName = document.getElementById("sellerShopName").value.trim();
+      const location = document.getElementById("sellerLocation").value.trim();
+      const email = document.getElementById("sellerEmail").value.trim();
+      const password = document.getElementById("sellerPassword").value;
+      const confirmPassword = document.getElementById("sellerConfirmPassword").value;
+
+      if (!shopName || !location || !email || !password || !confirmPassword) {
+        alert("Please fill all fields.");
+        return;
+      }
+      if (password !== confirmPassword) {
+        alert("Passwords do not match!");
+        return;
+      }
+
+      const seller = { shopName, location, email, password, products: [] };
+      localStorage.setItem("seller", JSON.stringify(seller));
+      alert("Seller signed up successfully!");
+      window.location.href = "seller.html";
+    }
   </script>
 </body>
 </html>
