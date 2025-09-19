@@ -5,94 +5,135 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Seller Dashboard - Market Bloom</title>
 <style>
-body { font-family: Arial, sans-serif; background-color: #f0fff0; margin: 0; padding: 0; }
-.container { max-width: 600px; margin: 50px auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
-h2 { text-align: center; color: #2d6a4f; }
-input, select { width: 100%; padding: 10px; margin: 8px 0; border-radius: 5px; border: 1px solid #ccc; }
-button { padding: 10px 20px; background-color: #2d6a4f; color: white; border: none; border-radius: 5px; cursor: pointer; width: 100%; }
-button:hover { background-color: #256a45; }
-.product-item { display: flex; gap: 10px; margin-bottom: 8px; }
-.product-item input, .product-item select { flex: 1; }
+  body { font-family: Arial, sans-serif; margin:0; background-color: #e6f9e6; }
+  header { background-color: #2d6a4f; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+  header img { height: 40px; }
+  header button { background:#e63946;color:white;border:none;padding:8px 15px;border-radius:5px;cursor:pointer; }
+  .container { padding:20px; max-width:900px;margin:auto; }
+  h2 { color:#2d6a4f; }
+  input, select { padding:8px;margin:5px 0;width:100%;border-radius:5px;border:1px solid #ccc; }
+  button.add-btn { background:#4CAF50; color:white; border:none; padding:8px 12px; cursor:pointer; margin-top:5px; border-radius:5px; }
+  .product-item { background:white; padding:10px; border-radius:8px; margin:5px 0; display:flex; justify-content: space-between; align-items:center; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
+  .product-item span { margin-right:10px; }
+  .edit-btn { background:#f4a261; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer; margin-right:5px; }
+  .delete-btn { background:#e63946; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer; }
 </style>
 </head>
 <body>
 
+<header>
+  <div class="logo">
+    <img src="logo.png" alt="Market Bloom Logo">
+    <span style="font-size:22px;margin-left:10px;">Market Bloom</span>
+  </div>
+  <button onclick="logout()">Logout</button>
+</header>
+
 <div class="container">
-<h2>Seller Dashboard</h2>
+  <h2>Shop Info</h2>
+  <label>Shop Name:</label>
+  <input type="text" id="shopName" placeholder="Shop Name">
+  <label>Location:</label>
+  <input type="text" id="shopLocation" placeholder="Location">
+  <label>Email:</label>
+  <input type="email" id="shopEmail" placeholder="Email">
+  <button class="add-btn" onclick="saveShopInfo()">Save Shop Info</button>
 
-<input type="text" id="shopName" placeholder="Shop Name">
-<input type="text" id="sellerName" placeholder="Your Name">
-<input type="text" id="location" placeholder="Location">
-<input type="email" id="email" placeholder="Email">
-<input type="password" id="password" placeholder="Password">
+  <h2>Products</h2>
+  <div id="productList"></div>
 
-<h3>Products</h3>
-<div id="productsContainer"></div>
-<button type="button" onclick="addProduct()">+ Add Product</button>
-<br><br>
-<button onclick="saveSeller()">Save / Update</button>
+  <h3>Add New Product</h3>
+  <label>Type:</label>
+  <select id="productType">
+    <option value="Flower">Flower</option>
+    <option value="Fruit">Fruit</option>
+  </select>
+  <label>Name:</label>
+  <input type="text" id="productName" placeholder="Product Name">
+  <label>Price:</label>
+  <input type="number" id="productPrice" placeholder="Price">
+  <button class="add-btn" onclick="addProduct()">Add Product</button>
 </div>
 
 <script>
-function addProduct(name='', type='Flower', price='') {
-  const container = document.getElementById('productsContainer');
-  const div = document.createElement('div');
-  div.className = 'product-item';
-  div.innerHTML = `
-    <input type="text" placeholder="Product Name" value="${name}">
-    <select>
-      <option value="Flower" ${type==='Flower'?'selected':''}>Flower</option>
-      <option value="Fruit" ${type==='Fruit'?'selected':''}>Fruit</option>
-    </select>
-    <input type="number" placeholder="Price" value="${price}">
-    <button type="button" onclick="removeProduct(this)">❌</button>
-  `;
-  container.appendChild(div);
+// --- Load seller info ---
+let seller = JSON.parse(localStorage.getItem("seller")) || { products: [] };
+
+function loadSeller() {
+  document.getElementById("shopName").value = seller.shopName || "";
+  document.getElementById("shopLocation").value = seller.location || "";
+  document.getElementById("shopEmail").value = seller.email || "";
+  renderProducts();
 }
 
-function removeProduct(button) {
-  button.parentElement.remove();
+function saveShopInfo() {
+  seller.shopName = document.getElementById("shopName").value;
+  seller.location = document.getElementById("shopLocation").value;
+  seller.email = document.getElementById("shopEmail").value;
+  localStorage.setItem("seller", JSON.stringify(seller));
+  alert("Shop info saved!");
 }
 
-function saveSeller() {
-  const shopName = document.getElementById('shopName').value.trim();
-  const sellerName = document.getElementById('sellerName').value.trim();
-  const location = document.getElementById('location').value.trim();
-  const email = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value;
-
-  if (!shopName || !sellerName || !location || !email) {
-    alert("Please fill all required fields.");
-    return;
-  }
-
-  const productDivs = document.querySelectorAll('#productsContainer .product-item');
-  const sellerProducts = [];
-  productDivs.forEach(div => {
-    const name = div.children[0].value.trim();
-    const type = div.children[1].value;
-    const price = div.children[2].value;
-    if(name && price) sellerProducts.push({name,type,price});
+function renderProducts() {
+  const list = document.getElementById("productList");
+  list.innerHTML = "";
+  seller.products.forEach((p, index) => {
+    const div = document.createElement("div");
+    div.className = "product-item";
+    div.innerHTML = `
+      <span>${p.type === "Flower" ? "🌹" : "🍎"} ${p.name} - ₹${p.price}</span>
+      <div>
+        <button class="edit-btn" onclick="editProduct(${index})">Edit</button>
+        <button class="delete-btn" onclick="deleteProduct(${index})">Delete</button>
+      </div>
+    `;
+    list.appendChild(div);
   });
-
-  const sellerData = { shopName, sellerName, location, email, password, products: sellerProducts };
-  localStorage.setItem('seller', JSON.stringify(sellerData));
-
-  alert("Seller data saved!");
 }
-  
-// Load existing data
-window.addEventListener('load', ()=>{
-  const seller = JSON.parse(localStorage.getItem('seller'));
-  if(seller) {
-    document.getElementById('shopName').value = seller.shopName;
-    document.getElementById('sellerName').value = seller.sellerName;
-    document.getElementById('location').value = seller.location;
-    document.getElementById('email').value = seller.email;
-    document.getElementById('password').value = seller.password || '';
-    seller.products.forEach(p=>addProduct(p.name,p.type,p.price));
+
+function addProduct() {
+  const type = document.getElementById("productType").value;
+  const name = document.getElementById("productName").value;
+  const price = document.getElementById("productPrice").value;
+  if (!name || !price) { alert("Enter product name and price"); return; }
+
+  seller.products.push({ type, name, price });
+  localStorage.setItem("seller", JSON.stringify(seller));
+  renderProducts();
+  document.getElementById("productName").value = "";
+  document.getElementById("productPrice").value = "";
+}
+
+// Edit product
+function editProduct(i) {
+  const p = seller.products[i];
+  const newName = prompt("Edit product name:", p.name);
+  const newPrice = prompt("Edit product price:", p.price);
+  if (newName !== null && newPrice !== null) {
+    seller.products[i].name = newName;
+    seller.products[i].price = newPrice;
+    localStorage.setItem("seller", JSON.stringify(seller));
+    renderProducts();
   }
-});
+}
+
+// Delete product
+function deleteProduct(i) {
+  if (confirm("Delete this product?")) {
+    seller.products.splice(i, 1);
+    localStorage.setItem("seller", JSON.stringify(seller));
+    renderProducts();
+  }
+}
+
+// Logout
+function logout() {
+  localStorage.removeItem("seller");
+  window.location.href = "logindirec.html";
+}
+
+// --- Initial load ---
+loadSeller();
 </script>
 </body>
 </html>
