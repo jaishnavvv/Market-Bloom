@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seller Dashboard - Market Bloom</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f0fff0;
+    }
+    header {
+      background-color: #2d6a4f;
+      color: white;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header img {
+      height: 40px;
+    }
+    header .profile-btn, .logout-btn {
+      background: white;
+      color: #2d6a4f;
+      padding: 8px 15px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .container {
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-top: 30px;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    h2 {
+      text-align: center;
+      color: #2d6a4f;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <img src="logo.png" alt="Market Bloom Logo">
+    <span style="font-size: 22px; margin-left: 10px;">Market Bloom</span>
+  </div>
+  <button class="logout-btn" onclick="logout()">Logout</button>
+</header>
+
+<div class="container">
+  <h2>Seller Dashboard</h2>
+  <p>Update your shop details and products below:</p>
+
+  <label for="shopName">Shop Name:</label>
+  <input type="text" id="shopName" placeholder="Enter shop name">
+
+  <label for="shopLocation">Location:</label>
+  <input type="text" id="shopLocation" placeholder="Enter shop location">
+
+  <label for="productName">Product Name:</label>
+  <input type="text" id="productName" placeholder="Enter product name">
+
+  <label for="productType">Product Type:</label>
+  <select id="productType">
+    <option value="Flower">Flower</option>
+    <option value="Fruit">Fruit</option>
+  </select>
+
+  <label for="productPrice">Price (₹ per unit):</label>
+  <input type="number" id="productPrice" placeholder="Enter price">
+
+  <button onclick="addProduct()">Add / Update Product</button>
+
+  <h3>Your Products:</h3>
+  <ul id="productList"></ul>
+</div>
+
+<script>
+  // Load seller info if exists
+  const sellerKey = "seller";
+  let sellerData = JSON.parse(localStorage.getItem(sellerKey)) || { shopName: "", location: "", products: [] };
+
+  document.getElementById("shopName").value = sellerData.shopName;
+  document.getElementById("shopLocation").value = sellerData.location;
+
+  function renderProducts() {
+    const list = document.getElementById("productList");
+    list.innerHTML = "";
+    sellerData.products.forEach((p, index) => {
+      const li = document.createElement("li");
+      li.textContent = `${p.name} (${p.type}) - ₹${p.price}`;
+      list.appendChild(li);
+    });
+  }
+
+  function addProduct() {
+    const shopName = document.getElementById("shopName").value.trim();
+    const shopLocation = document.getElementById("shopLocation").value.trim();
+    const productName = document.getElementById("productName").value.trim();
+    const productType = document.getElementById("productType").value;
+    const productPrice = document.getElementById("productPrice").value;
+
+    if (!shopName || !shopLocation || !productName || !productPrice) {
+      alert("Please fill all fields!");
+      return;
+    }
+
+    // Update seller info
+    sellerData.shopName = shopName;
+    sellerData.location = shopLocation;
+
+    // Add or update product
+    const existingIndex = sellerData.products.findIndex(p => p.name.toLowerCase() === productName.toLowerCase());
+    if (existingIndex !== -1) {
+      sellerData.products[existingIndex] = { name: productName, type: productType, price: productPrice };
+    } else {
+      sellerData.products.push({ name: productName, type: productType, price: productPrice });
+    }
+
+    localStorage.setItem(sellerKey, JSON.stringify(sellerData));
+
+    renderProducts();
+    alert("Product and shop info updated successfully!");
+  }
+
+  function logout() {
+    localStorage.removeItem(sellerKey);
+    window.location.href = "logindirec.html";
+  }
+
+  // Initial render
+  renderProducts();
+</script>
+
+</body>
+</html>
