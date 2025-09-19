@@ -21,13 +21,14 @@
     header img {
       height: 40px;
     }
-    header .login-btn {
+    header .login-btn, header .profile-btn {
       background: white;
       color: #2d6a4f;
       padding: 8px 15px;
       border-radius: 5px;
       text-decoration: none;
       font-weight: bold;
+      cursor: pointer;
     }
     .search-container {
       padding: 20px;
@@ -59,18 +60,50 @@
     .shop-card p {
       margin: 5px 0;
     }
+    /* Profile dropdown */
+    .profile-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    .profile-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      background: white;
+      min-width: 200px;
+      box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+      border-radius: 8px;
+      z-index: 1;
+      color: black;
+      padding: 10px;
+    }
+    .profile-dropdown:hover .profile-content {
+      display: block;
+    }
+    .logout-btn {
+      background: #e63946;
+      color: white;
+      padding: 8px 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
   <!-- Header -->
- <header>
-  <div class="logo">
-    <img src="logo.png" alt="Market Bloom Logo">
-    <span style="font-size: 22px; margin-left: 10px;">Market Bloom</span>
-  </div>
-  <!-- ✅ Updated link -->
-  <a href="logindirec.html" class="login-btn">Login / Sign Up</a>
-</header>
+  <header>
+    <div class="logo">
+      <img src="logo.png" alt="Market Bloom Logo">
+      <span style="font-size: 22px; margin-left: 10px;">Market Bloom</span>
+    </div>
+    <!-- Login/Profile Placeholder -->
+    <div id="userSection">
+      <a href="logindirec.html" class="login-btn">Login / Sign Up</a>
+    </div>
+  </header>
 
   <!-- Search Bar -->
   <div class="search-container">
@@ -100,7 +133,40 @@
   </div>
 
   <script>
-    // Search Filter
+    // --- Simulate login using localStorage ---
+    // Suppose buyer data gets saved after login/signup
+    // Example: localStorage.setItem("buyer", JSON.stringify({name: "Rajesh", email: "rajesh@mail.com"}));
+
+    function loadUser() {
+      let buyer = JSON.parse(localStorage.getItem("buyer"));
+      const userSection = document.getElementById("userSection");
+
+      if (buyer) {
+        // Show profile instead of login
+        userSection.innerHTML = `
+          <div class="profile-dropdown">
+            <span class="profile-btn">👤 ${buyer.name}</span>
+            <div class="profile-content">
+              <p><b>Name:</b> ${buyer.name}</p>
+              <p><b>Email:</b> ${buyer.email}</p>
+              <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+          </div>
+        `;
+      } else {
+        // Default login button
+        userSection.innerHTML = `<a href="logindirec.html" class="login-btn">Login / Sign Up</a>`;
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem("buyer");
+      loadUser();
+    }
+
+    loadUser();
+
+    // --- Search Filter ---
     document.getElementById("searchBox").addEventListener("keyup", function() {
       let filter = this.value.toLowerCase();
       let shops = document.querySelectorAll(".shop-card");
@@ -109,15 +175,6 @@
         shop.style.display = text.includes(filter) ? "" : "none";
       });
     });
-
-    // Get User Location (optional: later link with backend)
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(function(position) {
-        console.log("Latitude: " + position.coords.latitude +
-                    " Longitude: " + position.coords.longitude);
-        // Later: send this to backend to fetch nearby shops
-      });
-    }
   </script>
 </body>
 </html>
