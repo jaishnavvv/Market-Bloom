@@ -5,28 +5,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Market Bloom - Nearby Shops</title>
 <style>
-body { font-family: Arial, sans-serif; margin: 0; background-color: #e6f9e6; }
-header { background-color: #2d6a4f; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
-header img { height: 40px; }
-header .login-btn, header .profile-btn { background: white; color: #2d6a4f; padding: 8px 15px; border-radius: 5px; text-decoration: none; font-weight: bold; cursor: pointer; }
-.search-container { padding: 20px; text-align: center; }
-.search-container input { width: 60%; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 8px; }
-.shop-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; padding: 20px; }
-.shop-card { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-.shop-card h3 { margin: 0; color: #2d6a4f; }
-.shop-card p { margin: 5px 0; }
-/* Profile dropdown */
-.profile-dropdown { position: relative; display: inline-block; }
-.profile-content { display: none; position: absolute; right: 0; background: white; min-width: 200px; box-shadow: 0px 4px 8px rgba(0,0,0,0.2); border-radius: 8px; z-index: 1; color: black; padding: 10px; }
-.profile-dropdown:hover .profile-content { display: block; }
-.logout-btn { background: #e63946; color: white; padding: 8px 10px; border: none; border-radius: 5px; cursor: pointer; width: 100%; margin-top: 10px; }
+  body { font-family: Arial, sans-serif; margin:0; background-color:#e6f9e6; }
+  header { background-color:#2d6a4f;color:white;padding:15px;display:flex;justify-content:space-between;align-items:center; }
+  header img { height:40px; }
+  header .login-btn, header .profile-btn { background:white;color:#2d6a4f;padding:8px 15px;border-radius:5px;text-decoration:none;font-weight:bold;cursor:pointer; }
+  .search-container { padding:20px;text-align:center; }
+  .search-container input { width:60%;padding:10px;font-size:16px;border:1px solid #ccc;border-radius:8px; }
+  .shop-list { display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;padding:20px; }
+  .shop-card { background:white;padding:15px;border-radius:10px;box-shadow:0 2px 5px rgba(0,0,0,0.1); }
+  .shop-card h3 { margin:0;color:#2d6a4f; }
+  .shop-card p { margin:5px 0; }
+  .profile-dropdown { position:relative; display:inline-block; }
+  .profile-content { display:none;position:absolute;right:0;background:white;min-width:200px;box-shadow:0px 4px 8px rgba(0,0,0,0.2);border-radius:8px;z-index:1;color:black;padding:10px; }
+  .profile-dropdown:hover .profile-content { display:block; }
+  .logout-btn { background:#e63946;color:white;padding:8px 10px;border:none;border-radius:5px;cursor:pointer;width:100%;margin-top:10px; }
 </style>
 </head>
 <body>
+
 <header>
   <div class="logo">
     <img src="logo.png" alt="Market Bloom Logo">
-    <span style="font-size: 22px; margin-left: 10px;">Market Bloom</span>
+    <span style="font-size:22px;margin-left:10px;">Market Bloom</span>
   </div>
   <div id="userSection">
     <a href="logindirec.html" class="login-btn">Login / Sign Up</a>
@@ -40,77 +40,75 @@ header .login-btn, header .profile-btn { background: white; color: #2d6a4f; padd
 <div class="shop-list" id="shopList"></div>
 
 <script>
-// --- Buyer login/profile ---
-function loadUser() {
-  let buyer = JSON.parse(localStorage.getItem("buyer"));
-  const userSection = document.getElementById("userSection");
-
-  if (buyer) {
-    userSection.innerHTML = `
-      <div class="profile-dropdown">
-        <span class="profile-btn">👤 ${buyer.name}</span>
-        <div class="profile-content">
-          <p><b>Name:</b> ${buyer.name}</p>
-          <p><b>Email:</b> ${buyer.email}</p>
-          <button class="logout-btn" onclick="logout()">Logout</button>
+  // --- Buyer login/profile ---
+  function loadUser() {
+    let buyer = JSON.parse(localStorage.getItem("buyer"));
+    const userSection = document.getElementById("userSection");
+    if (buyer) {
+      userSection.innerHTML = `
+        <div class="profile-dropdown">
+          <span class="profile-btn">👤 ${buyer.name}</span>
+          <div class="profile-content">
+            <p><b>Name:</b> ${buyer.name}</p>
+            <p><b>Email:</b> ${buyer.email}</p>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+          </div>
         </div>
-      </div>
-    `;
-  } else {
-    userSection.innerHTML = `<a href="logindirec.html" class="login-btn">Login / Sign Up</a>`;
+      `;
+    } else {
+      userSection.innerHTML = `<a href="logindirec.html" class="login-btn">Login / Sign Up</a>`;
+    }
   }
-}
 
-function logout() {
-  localStorage.removeItem("buyer");
-  loadUser();
-}
+  function logout() {
+    localStorage.removeItem("buyer");
+    loadUser();
+  }
 
-// --- Load seller/shop data ---
-function loadShops() {
-  const shopList = document.getElementById("shopList");
-  shopList.innerHTML = "";
+  // --- Load seller/shop data ---
+  function loadShops() {
+    const shopList = document.getElementById("shopList");
+    shopList.innerHTML = "";
 
-  const seller = JSON.parse(localStorage.getItem("seller"));
-  if (seller && seller.shopName) {
-    const card = document.createElement("div");
-    card.className = "shop-card";
+    const seller = JSON.parse(localStorage.getItem("seller"));
+    if (seller && seller.shopName) {
+      const card = document.createElement("div");
+      card.className = "shop-card";
 
-    let productsHTML = "";
-    seller.products.forEach(p => {
-      productsHTML += `<p>${p.type === "Flower" ? "🌹" : "🍎"} ${p.name} - ₹${p.price}</p>`;
+      let productsHTML = "";
+      seller.products.forEach(p => {
+        productsHTML += `<p>${p.type === "Flower" ? "🌹" : "🍎"} ${p.name} - ₹${p.price}</p>`;
+      });
+
+      card.innerHTML = `
+        <h3>${seller.shopName}</h3>
+        ${productsHTML}
+        <p><b>Location:</b> ${seller.location}</p>
+      `;
+      shopList.appendChild(card);
+    }
+  }
+
+  // --- Search filter ---
+  document.getElementById("searchBox").addEventListener("keyup", function() {
+    const filter = this.value.toLowerCase();
+    document.querySelectorAll(".shop-card").forEach(shop => {
+      shop.style.display = shop.innerText.toLowerCase().includes(filter) ? "" : "none";
     });
-
-    card.innerHTML = `
-      <h3>${seller.shopName}</h3>
-      ${productsHTML}
-      <p><b>Location:</b> ${seller.location}</p>
-    `;
-    shopList.appendChild(card);
-  }
-}
-
-// --- Search filter ---
-document.getElementById("searchBox").addEventListener("keyup", function() {
-  const filter = this.value.toLowerCase();
-  document.querySelectorAll(".shop-card").forEach(shop => {
-    shop.style.display = shop.innerText.toLowerCase().includes(filter) ? "" : "none";
   });
-});
 
-// --- Live updates for other tabs ---
-window.addEventListener("storage", function(e) {
-  if (e.key === "seller") {
-    loadShops();
-  }
-});
+  // --- Live updates across tabs ---
+  window.addEventListener("storage", function(e) {
+    if (e.key === "seller") loadShops();
+  });
 
-// --- Auto-refresh for same tab updates ---
-setInterval(loadShops, 2000); // refresh every 2 seconds
+  // --- Auto-refresh same tab ---
+  setInterval(loadShops, 2000);
 
-// --- Initial load ---
-loadUser();
-loadShops();
+  // --- Initial load ---
+  loadUser();
+  loadShops();
 </script>
+
 </body>
 </html>
