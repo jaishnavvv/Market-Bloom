@@ -1,43 +1,122 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Market Bloom</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login / Sign Up - Market Bloom</title>
   <style>
-    .logo {
-      width: 120px;
-      margin-bottom: 20px;
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0fdf4;
+      margin: 0;
+      padding: 0;
     }
-    .custom-btn {
-      font-size: 1.2rem;
-      padding: 12px 25px;
-      border-radius: 30px;
-      transition: 0.3s ease-in-out;
-      box-shadow: 0px 4px 6px rgba(0,0,0,0.2);
+    header {
+      background: #2d6a4f;
+      padding: 15px;
+      color: white;
+      text-align: center;
     }
-    .custom-btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0px 6px 12px rgba(0,0,0,0.3);
+    .container {
+      max-width: 400px;
+      margin: 30px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    h2 {
+      color: #2d6a4f;
+      text-align: center;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      width: 100%;
+      margin-top: 15px;
+      padding: 10px;
+      background: #2d6a4f;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background: #1b4332;
+    }
+    .form-section {
+      margin-bottom: 30px;
     }
   </style>
 </head>
-<body class="text-center p-5" style="background-color: #d4f5d4;">
+<body>
 
-  <!-- Logo on top -->
-  <img src="logo.png" alt="Market Bloom Logo" class="logo" style="border-radius: 20px;">
+  <header>
+    <h1>Market Bloom Login</h1>
+  </header>
 
+  <div class="container">
 
-  <h1 class="mb-4">🌸 Market Bloom 🌸</h1>
-  <p class="mb-4">Connecting buyers and sellers of fresh flowers and fruits.</p>
+    <!-- Buyer Login -->
+    <div class="form-section">
+      <h2>Buyer Login</h2>
+      <form onsubmit="buyerLogin(event)">
+        <label for="buyerName">Name</label>
+        <input type="text" id="buyerName" required>
+        
+        <label for="buyerEmail">Email</label>
+        <input type="email" id="buyerEmail" required>
+        
+        <button type="submit">Login as Buyer</button>
+      </form>
+    </div>
 
-  <!-- Buttons -->
-  <button onclick="window.location.href='buyer-login.html'" 
-          class="btn btn-success custom-btn m-2">Login as Buyer</button>
+    <!-- Seller Login -->
+    <div class="form-section">
+      <h2>Seller Login</h2>
+      <form onsubmit="sellerLogin(event)">
+        <label for="sellerName">Shop Name</label>
+        <input type="text" id="sellerName" required>
+        
+        <label for="sellerEmail">Email</label>
+        <input type="email" id="sellerEmail" required>
+        
+        <button type="submit">Login as Seller</button>
+      </form>
+    </div>
 
-  <button onclick="window.location.href='seller-login.html'" 
-          class="btn btn-primary custom-btn m-2">Login as Seller</button>
+  </div>
+
+  <script>
+    function buyerLogin(event) {
+      event.preventDefault();
+      const name = document.getElementById("buyerName").value;
+      const email = document.getElementById("buyerEmail").value;
+
+      localStorage.setItem("buyer", JSON.stringify({ name, email }));
+      window.location.href = "index.html"; // redirect back
+    }
+
+    function sellerLogin(event) {
+      event.preventDefault();
+      const name = document.getElementById("sellerName").value;
+      const email = document.getElementById("sellerEmail").value;
+
+      localStorage.setItem("seller", JSON.stringify({ name, email }));
+      window.location.href = "index.html"; // redirect back
+    }
+  </script>
 
 </body>
 </html>
-
-
