@@ -5,138 +5,44 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Market Bloom - Nearby Shops</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background-color: #e6f9e6; /* light green background */
-    }
-    header {
-      background-color: #2d6a4f;
-      color: white;
-      padding: 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    header img {
-      height: 40px;
-    }
-    header .login-btn, header .profile-btn {
-      background: white;
-      color: #2d6a4f;
-      padding: 8px 15px;
-      border-radius: 5px;
-      text-decoration: none;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .search-container {
-      padding: 20px;
-      text-align: center;
-    }
-    .search-container input {
-      width: 60%;
-      padding: 10px;
-      font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-    }
-    .shop-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-      padding: 20px;
-    }
-    .shop-card {
-      background: white;
-      padding: 15px;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    .shop-card h3 {
-      margin: 0;
-      color: #2d6a4f;
-    }
-    .shop-card p {
-      margin: 5px 0;
-    }
-    /* Profile dropdown */
-    .profile-dropdown {
-      position: relative;
-      display: inline-block;
-    }
-    .profile-content {
-      display: none;
-      position: absolute;
-      right: 0;
-      background: white;
-      min-width: 200px;
-      box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
-      border-radius: 8px;
-      z-index: 1;
-      color: black;
-      padding: 10px;
-    }
-    .profile-dropdown:hover .profile-content {
-      display: block;
-    }
-    .logout-btn {
-      background: #e63946;
-      color: white;
-      padding: 8px 10px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      width: 100%;
-      margin-top: 10px;
-    }
+    body { font-family: Arial, sans-serif; margin: 0; background-color: #e6f9e6; }
+    header { background-color: #2d6a4f; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+    header img { height: 40px; }
+    header .login-btn, header .profile-btn { background: white; color: #2d6a4f; padding: 8px 15px; border-radius: 5px; text-decoration: none; font-weight: bold; cursor: pointer; }
+    .search-container { padding: 20px; text-align: center; }
+    .search-container input { width: 60%; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 8px; }
+    .shop-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; padding: 20px; }
+    .shop-card { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .shop-card h3 { margin: 0; color: #2d6a4f; }
+    .shop-card p { margin: 5px 0; }
+    .profile-dropdown { position: relative; display: inline-block; }
+    .profile-content { display: none; position: absolute; right: 0; background: white; min-width: 200px; box-shadow: 0px 4px 8px rgba(0,0,0,0.2); border-radius: 8px; z-index: 1; color: black; padding: 10px; }
+    .profile-dropdown:hover .profile-content { display: block; }
+    .logout-btn { background: #e63946; color: white; padding: 8px 10px; border: none; border-radius: 5px; cursor: pointer; width: 100%; margin-top: 10px; }
   </style>
 </head>
 <body>
-  <!-- Header -->
   <header>
     <div class="logo">
       <img src="logo.png" alt="Market Bloom Logo">
       <span style="font-size: 22px; margin-left: 10px;">Market Bloom</span>
     </div>
-    <!-- Login/Profile Placeholder -->
     <div id="userSection">
       <a href="logindirec.html" class="login-btn">Login / Sign Up</a>
     </div>
   </header>
 
-  <!-- Search Bar -->
   <div class="search-container">
     <input type="text" id="searchBox" placeholder="Search for flowers, fruits, or shops...">
   </div>
 
-  <!-- Shop List -->
-  <div class="shop-list" id="shopList">
-    <div class="shop-card">
-      <h3>Green Garden Florist</h3>
-      <p>🌹 Roses - ₹50 / bunch</p>
-      <p>🌼 Marigold - ₹30 / bunch</p>
-      <p><b>Location:</b> Near KPHB Metro, Hyderabad</p>
-    </div>
-    <div class="shop-card">
-      <h3>Fresh Fruit Mart</h3>
-      <p>🍎 Apples - ₹120 / kg</p>
-      <p>🍌 Bananas - ₹40 / dozen</p>
-      <p><b>Location:</b> Kukatpally, Hyderabad</p>
-    </div>
-    <div class="shop-card">
-      <h3>Bloom n’ Bright</h3>
-      <p>🌷 Tulips - ₹100 / bunch</p>
-      <p>🌻 Sunflower - ₹60 / bunch</p>
-      <p><b>Location:</b> Miyapur, Hyderabad</p>
-    </div>
-  </div>
+  <div class="shop-list" id="shopList"></div>
 
   <script>
+    // Load buyer info
     function loadUser() {
-      const userSection = document.getElementById("userSection");
       let buyer = JSON.parse(localStorage.getItem("buyer"));
-      let seller = JSON.parse(localStorage.getItem("seller"));
+      const userSection = document.getElementById("userSection");
 
       if (buyer) {
         userSection.innerHTML = `
@@ -145,18 +51,7 @@
             <div class="profile-content">
               <p><b>Name:</b> ${buyer.name}</p>
               <p><b>Email:</b> ${buyer.email}</p>
-              <button class="logout-btn" onclick="logout('buyer')">Logout</button>
-            </div>
-          </div>
-        `;
-      } else if (seller) {
-        userSection.innerHTML = `
-          <div class="profile-dropdown">
-            <span class="profile-btn">🏪 ${seller.shopName}</span>
-            <div class="profile-content">
-              <p><b>Shop Name:</b> ${seller.shopName}</p>
-              <p><b>Email:</b> ${seller.email}</p>
-              <button class="logout-btn" onclick="logout('seller')">Logout</button>
+              <button class="logout-btn" onclick="logout()">Logout</button>
             </div>
           </div>
         `;
@@ -165,23 +60,51 @@
       }
     }
 
-    function logout(type) {
-      if (type === 'buyer') localStorage.removeItem("buyer");
-      else if (type === 'seller') localStorage.removeItem("seller");
+    function logout() {
+      localStorage.removeItem("buyer");
       loadUser();
     }
 
-    loadUser();
+    // Load seller/shop data into buyer view
+    function loadShops() {
+      const shopList = document.getElementById("shopList");
+      shopList.innerHTML = "";
 
-    // Search Filter
+      const seller = JSON.parse(localStorage.getItem("seller"));
+      if (seller && seller.shopName) {
+        const card = document.createElement("div");
+        card.className = "shop-card";
+        let productsHTML = "";
+        seller.products.forEach(p => {
+          productsHTML += `<p>${p.type === "Flower" ? "🌹" : "🍎"} ${p.name} - ₹${p.price}</p>`;
+        });
+        card.innerHTML = `
+          <h3>${seller.shopName}</h3>
+          ${productsHTML}
+          <p><b>Location:</b> ${seller.location}</p>
+        `;
+        shopList.appendChild(card);
+      }
+    }
+
+    // Search filter
     document.getElementById("searchBox").addEventListener("keyup", function() {
       let filter = this.value.toLowerCase();
-      let shops = document.querySelectorAll(".shop-card");
-      shops.forEach(shop => {
-        let text = shop.innerText.toLowerCase();
-        shop.style.display = text.includes(filter) ? "" : "none";
+      document.querySelectorAll(".shop-card").forEach(shop => {
+        shop.style.display = shop.innerText.toLowerCase().includes(filter) ? "" : "none";
       });
     });
+
+    // Listen for live updates from seller (storage events)
+    window.addEventListener("storage", function(e) {
+      if (e.key === "seller") {
+        loadShops();
+      }
+    });
+
+    // Initial load
+    loadUser();
+    loadShops();
   </script>
 </body>
 </html>
