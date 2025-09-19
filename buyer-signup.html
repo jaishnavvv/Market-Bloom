@@ -21,17 +21,37 @@
   <div class="form-container text-center">
     <img src="logo.png" alt="Market Bloom Logo" class="logo-small">
     <h3 class="mb-3">Buyer Signup</h3>
-  <form onsubmit="event.preventDefault(); window.location.href='welcome.html';">
-  <input type="text" class="form-control mb-3" placeholder="Full Name" required>
-  <input type="text" class="form-control mb-3" placeholder="Shop Name" required>
-  <input type="email" class="form-control mb-3" placeholder="Email" required>
-  <input type="password" class="form-control mb-3" placeholder="Password" required>
-  <input type="password" class="form-control mb-3" placeholder="Confirm Password" required>
-  <button type="submit" class="btn btn-primary w-100">Sign Up</button>
-  <a href="buyer-login.html" class="btn btn-outline-success w-100 mt-2">Already have an account? Login</a>
+    <form id="signupForm">
+      <input type="text" id="fullName" class="form-control mb-3" placeholder="Full Name" required>
+      <input type="email" id="email" class="form-control mb-3" placeholder="Email" required>
+      <input type="password" id="password" class="form-control mb-3" placeholder="Password" required>
+      <input type="password" id="confirmPassword" class="form-control mb-3" placeholder="Confirm Password" required>
+      <button type="submit" class="btn btn-custom">Sign Up</button>
+      <a href="buyer-login.html" class="btn btn-outline-success w-100 mt-2">Already have an account? Login</a>
     </form>
   </div>
+
+  <script>
+    document.getElementById("signupForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      const name = document.getElementById("fullName").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const confirmPassword = document.getElementById("confirmPassword").value;
+
+      if (password !== confirmPassword) {
+        alert("Passwords do not match!");
+        return;
+      }
+
+      // Save buyer data in localStorage
+      const buyer = { name, email };
+      localStorage.setItem("buyer", JSON.stringify(buyer));
+
+      // Redirect to homepage
+      window.location.href = "index.html";
+    });
+  </script>
 </body>
 </html>
-
-
