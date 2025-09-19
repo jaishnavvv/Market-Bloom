@@ -38,73 +38,79 @@
 
   <div class="shop-list" id="shopList"></div>
 
-  <script>
-    // Load buyer info
-    function loadUser() {
-      let buyer = JSON.parse(localStorage.getItem("buyer"));
-      const userSection = document.getElementById("userSection");
+ <script>
+  // --- Buyer login/profile ---
+  function loadUser() {
+    let buyer = JSON.parse(localStorage.getItem("buyer"));
+    const userSection = document.getElementById("userSection");
 
-      if (buyer) {
-        userSection.innerHTML = `
-          <div class="profile-dropdown">
-            <span class="profile-btn">👤 ${buyer.name}</span>
-            <div class="profile-content">
-              <p><b>Name:</b> ${buyer.name}</p>
-              <p><b>Email:</b> ${buyer.email}</p>
-              <button class="logout-btn" onclick="logout()">Logout</button>
-            </div>
+    if (buyer) {
+      userSection.innerHTML = `
+        <div class="profile-dropdown">
+          <span class="profile-btn">👤 ${buyer.name}</span>
+          <div class="profile-content">
+            <p><b>Name:</b> ${buyer.name}</p>
+            <p><b>Email:</b> ${buyer.email}</p>
+            <button class="logout-btn" onclick="logout()">Logout</button>
           </div>
-        `;
-      } else {
-        userSection.innerHTML = `<a href="logindirec.html" class="login-btn">Login / Sign Up</a>`;
-      }
+        </div>
+      `;
+    } else {
+      userSection.innerHTML = `<a href="logindirec.html" class="login-btn">Login / Sign Up</a>`;
     }
+  }
 
-    function logout() {
-      localStorage.removeItem("buyer");
-      loadUser();
-    }
-
-    // Load seller/shop data into buyer view
-    function loadShops() {
-      const shopList = document.getElementById("shopList");
-      shopList.innerHTML = "";
-
-      const seller = JSON.parse(localStorage.getItem("seller"));
-      if (seller && seller.shopName) {
-        const card = document.createElement("div");
-        card.className = "shop-card";
-        let productsHTML = "";
-        seller.products.forEach(p => {
-          productsHTML += `<p>${p.type === "Flower" ? "🌹" : "🍎"} ${p.name} - ₹${p.price}</p>`;
-        });
-        card.innerHTML = `
-          <h3>${seller.shopName}</h3>
-          ${productsHTML}
-          <p><b>Location:</b> ${seller.location}</p>
-        `;
-        shopList.appendChild(card);
-      }
-    }
-
-    // Search filter
-    document.getElementById("searchBox").addEventListener("keyup", function() {
-      let filter = this.value.toLowerCase();
-      document.querySelectorAll(".shop-card").forEach(shop => {
-        shop.style.display = shop.innerText.toLowerCase().includes(filter) ? "" : "none";
-      });
-    });
-
-    // Listen for live updates from seller (storage events)
-    window.addEventListener("storage", function(e) {
-      if (e.key === "seller") {
-        loadShops();
-      }
-    });
-
-    // Initial load
+  function logout() {
+    localStorage.removeItem("buyer");
     loadUser();
-    loadShops();
-  </script>
+  }
+
+  // --- Load seller/shop data ---
+  function loadShops() {
+    const shopList = document.getElementById("shopList");
+    shopList.innerHTML = "";
+
+    const seller = JSON.parse(localStorage.getItem("seller"));
+    if (seller && seller.shopName) {
+      const card = document.createElement("div");
+      card.className = "shop-card";
+
+      let productsHTML = "";
+      seller.products.forEach(p => {
+        productsHTML += `<p>${p.type === "Flower" ? "🌹" : "🍎"} ${p.name} - ₹${p.price}</p>`;
+      });
+
+      card.innerHTML = `
+        <h3>${seller.shopName}</h3>
+        ${productsHTML}
+        <p><b>Location:</b> ${seller.location}</p>
+      `;
+      shopList.appendChild(card);
+    }
+  }
+
+  // --- Search filter ---
+  document.getElementById("searchBox").addEventListener("keyup", function() {
+    const filter = this.value.toLowerCase();
+    document.querySelectorAll(".shop-card").forEach(shop => {
+      shop.style.display = shop.innerText.toLowerCase().includes(filter) ? "" : "none";
+    });
+  });
+
+  // --- Live updates for other tabs ---
+  window.addEventListener("storage", function(e) {
+    if (e.key === "seller") {
+      loadShops();
+    }
+  });
+
+  // --- Auto-refresh for same tab updates ---
+  setInterval(loadShops, 2000); // refresh every 2 seconds
+
+  // --- Initial load ---
+  loadUser();
+  loadShops();
+</script>
+
 </body>
 </html>
