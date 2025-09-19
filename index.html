@@ -133,11 +133,10 @@
   </div>
 
   <script>
-    // --- Load logged-in user (buyer or seller) ---
     function loadUser() {
       const userSection = document.getElementById("userSection");
-      const buyer = JSON.parse(localStorage.getItem("buyer"));
-      const seller = JSON.parse(localStorage.getItem("seller"));
+      let buyer = JSON.parse(localStorage.getItem("buyer"));
+      let seller = JSON.parse(localStorage.getItem("seller"));
 
       if (buyer) {
         userSection.innerHTML = `
@@ -146,18 +145,18 @@
             <div class="profile-content">
               <p><b>Name:</b> ${buyer.name}</p>
               <p><b>Email:</b> ${buyer.email}</p>
-              <button class="logout-btn" onclick="logout()">Logout</button>
+              <button class="logout-btn" onclick="logout('buyer')">Logout</button>
             </div>
           </div>
         `;
       } else if (seller) {
         userSection.innerHTML = `
           <div class="profile-dropdown">
-            <span class="profile-btn">🏬 ${seller.shopName}</span>
+            <span class="profile-btn">🏪 ${seller.shopName}</span>
             <div class="profile-content">
               <p><b>Shop Name:</b> ${seller.shopName}</p>
               <p><b>Email:</b> ${seller.email}</p>
-              <button class="logout-btn" onclick="logout()">Logout</button>
+              <button class="logout-btn" onclick="logout('seller')">Logout</button>
             </div>
           </div>
         `;
@@ -166,19 +165,21 @@
       }
     }
 
-    function logout() {
-      localStorage.removeItem("buyer");
-      localStorage.removeItem("seller");
+    function logout(type) {
+      if (type === 'buyer') localStorage.removeItem("buyer");
+      else if (type === 'seller') localStorage.removeItem("seller");
       loadUser();
     }
 
     loadUser();
 
-    // --- Search Filter ---
+    // Search Filter
     document.getElementById("searchBox").addEventListener("keyup", function() {
-      const filter = this.value.toLowerCase();
-      document.querySelectorAll(".shop-card").forEach(shop => {
-        shop.style.display = shop.innerText.toLowerCase().includes(filter) ? "" : "none";
+      let filter = this.value.toLowerCase();
+      let shops = document.querySelectorAll(".shop-card");
+      shops.forEach(shop => {
+        let text = shop.innerText.toLowerCase();
+        shop.style.display = text.includes(filter) ? "" : "none";
       });
     });
   </script>
