@@ -7,116 +7,112 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f0fdf4;
+      background-color: #e6f9e6;
       margin: 0;
       padding: 0;
     }
-    header {
-      background: #2d6a4f;
-      padding: 15px;
-      color: white;
-      text-align: center;
-    }
     .container {
-      max-width: 400px;
-      margin: 30px auto;
+      max-width: 500px;
+      margin: 50px auto;
       background: white;
-      padding: 20px;
+      padding: 30px;
       border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     }
     h2 {
-      color: #2d6a4f;
       text-align: center;
+      color: #2d6a4f;
     }
-    label {
-      display: block;
-      margin-top: 10px;
-      font-weight: bold;
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
     }
     input {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-      border-radius: 5px;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 8px;
       border: 1px solid #ccc;
     }
     button {
-      width: 100%;
-      margin-top: 15px;
       padding: 10px;
-      background: #2d6a4f;
+      font-size: 16px;
+      background-color: #2d6a4f;
       color: white;
       border: none;
-      border-radius: 5px;
+      border-radius: 8px;
       cursor: pointer;
-      font-size: 16px;
     }
     button:hover {
-      background: #1b4332;
+      background-color: #1b4332;
     }
-    .form-section {
-      margin-bottom: 30px;
+    .toggle-btns {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+      gap: 10px;
+    }
+    .toggle-btns button {
+      background-color: #4CAF50;
+      font-weight: bold;
+    }
+    .toggle-btns button.active {
+      background-color: #2d6a4f;
     }
   </style>
 </head>
 <body>
-
-  <header>
-    <h1>Market Bloom Login</h1>
-  </header>
-
   <div class="container">
+    <h2 id="formTitle">Buyer Login / Sign Up</h2>
 
-    <!-- Buyer Login -->
-    <div class="form-section">
-      <h2>Buyer Login</h2>
-      <form onsubmit="buyerLogin(event)">
-        <label for="buyerName">Name</label>
-        <input type="text" id="buyerName" required>
-        
-        <label for="buyerEmail">Email</label>
-        <input type="email" id="buyerEmail" required>
-        
-        <button type="submit">Login as Buyer</button>
-      </form>
+    <div class="toggle-btns">
+      <button id="buyerBtn" class="active">Buyer</button>
+      <button id="sellerBtn">Seller</button>
     </div>
 
-    <!-- Seller Login -->
-    <div class="form-section">
-      <h2>Seller Login</h2>
-      <form onsubmit="sellerLogin(event)">
-        <label for="sellerName">Shop Name</label>
-        <input type="text" id="sellerName" required>
-        
-        <label for="sellerEmail">Email</label>
-        <input type="email" id="sellerEmail" required>
-        
-        <button type="submit">Login as Seller</button>
-      </form>
-    </div>
-
+    <form id="loginForm">
+      <input type="text" id="name" placeholder="Your Name / Shop Name" required>
+      <input type="email" id="email" placeholder="Email" required>
+      <button type="submit">Submit</button>
+    </form>
   </div>
 
   <script>
-    function buyerLogin(event) {
+    const buyerBtn = document.getElementById("buyerBtn");
+    const sellerBtn = document.getElementById("sellerBtn");
+    const formTitle = document.getElementById("formTitle");
+    const loginForm = document.getElementById("loginForm");
+    let userType = "buyer"; // default
+
+    buyerBtn.addEventListener("click", () => {
+      userType = "buyer";
+      formTitle.textContent = "Buyer Login / Sign Up";
+      buyerBtn.classList.add("active");
+      sellerBtn.classList.remove("active");
+    });
+
+    sellerBtn.addEventListener("click", () => {
+      userType = "seller";
+      formTitle.textContent = "Seller Login / Sign Up";
+      sellerBtn.classList.add("active");
+      buyerBtn.classList.remove("active");
+    });
+
+    loginForm.addEventListener("submit", function(event) {
       event.preventDefault();
-      const name = document.getElementById("buyerName").value;
-      const email = document.getElementById("buyerEmail").value;
 
-      localStorage.setItem("buyer", JSON.stringify({ name, email }));
-      window.location.href = "index.html"; // redirect back
-    }
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
 
-    function sellerLogin(event) {
-      event.preventDefault();
-      const name = document.getElementById("sellerName").value;
-      const email = document.getElementById("sellerEmail").value;
+      if(userType === "buyer") {
+        localStorage.setItem("buyer", JSON.stringify({ name, email }));
+      } else {
+        localStorage.setItem("seller", JSON.stringify({ shopName: name, email }));
+      }
 
-      localStorage.setItem("seller", JSON.stringify({ name, email }));
-      window.location.href = "index.html"; // redirect back
-    }
+      // Redirect back to homepage
+      window.location.href = "index.html";
+    });
   </script>
-
 </body>
 </html>
