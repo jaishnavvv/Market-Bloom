@@ -8,13 +8,12 @@
   body { font-family: Arial, sans-serif; margin:0; background-color: #e6f9e6; }
   header { background-color: #2d6a4f; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
   header img { height: 40px; }
-  header nav { display: flex; gap: 15px; align-items: center; }
-  header nav a { color: white; text-decoration: none; font-weight: bold; }
-  header nav a:hover { text-decoration: underline; }
-  header button { background:#e63946; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; }
-  .container { padding:20px; max-width:900px; margin:auto; }
+  header .nav-buttons { display: flex; gap: 10px; }
+  header button { background:#e63946;color:white;border:none;padding:8px 15px;border-radius:5px;cursor:pointer; }
+  header button.market-btn { background:#40916c; }
+  .container { padding:20px; max-width:900px;margin:auto; }
   h2 { color:#2d6a4f; }
-  input, select { padding:8px; margin:5px 0; width:100%; border-radius:5px; border:1px solid #ccc; }
+  input, select { padding:8px;margin:5px 0;width:100%;border-radius:5px;border:1px solid #ccc; }
   button.add-btn { background:#4CAF50; color:white; border:none; padding:8px 12px; cursor:pointer; margin-top:5px; border-radius:5px; }
   .product-item { background:white; padding:10px; border-radius:8px; margin:5px 0; display:flex; justify-content: space-between; align-items:center; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
   .product-item span { margin-right:10px; }
@@ -29,11 +28,10 @@
     <img src="logo.png" alt="Market Bloom Logo">
     <span style="font-size:22px;margin-left:10px;">Market Bloom</span>
   </div>
-  <nav>
-    <a href="seller.html">Shop</a>
-    <a href="index.html">Marketplace</a>
+  <div class="nav-buttons">
+    <button class="market-btn" onclick="goToMarketplace()">Marketplace</button>
     <button onclick="logout()">Logout</button>
-  </nav>
+  </div>
 </header>
 
 <div class="container">
@@ -65,8 +63,15 @@
 <script>
   // --- Load seller info ---
   let allSellers = JSON.parse(localStorage.getItem("allSellers")) || [];
-  let currentEmail = localStorage.getItem("currentSellerEmail"); // store logged-in seller's email
-  let seller = allSellers.find(s => s.email === currentEmail) || { products: [] };
+  let currentEmail = localStorage.getItem("currentSellerEmail");
+  let seller = allSellers.find(s => s.email === currentEmail);
+
+  if (!seller) {
+    seller = { email: currentEmail, products: [] };
+    allSellers.push(seller);
+    localStorage.setItem("allSellers", JSON.stringify(allSellers));
+  }
+  if (!seller.products) seller.products = [];
 
   function loadSeller() {
     document.getElementById("shopName").value = seller.shopName || "";
@@ -80,7 +85,6 @@
     seller.location = document.getElementById("shopLocation").value;
     seller.email = document.getElementById("shopEmail").value;
 
-    // Update or add seller in allSellers array
     const index = allSellers.findIndex(s => s.email === currentEmail);
     if (index >= 0) {
       allSellers[index] = seller;
@@ -147,6 +151,11 @@
     if (index >= 0) allSellers[index] = seller;
     else allSellers.push(seller);
     localStorage.setItem("allSellers", JSON.stringify(allSellers));
+  }
+
+  function goToMarketplace() {
+    // ✅ Just go to index.html without logging out
+    window.location.href = "index.html";
   }
 
   function logout() {
