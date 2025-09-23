@@ -5,20 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Seller Dashboard - Market Bloom</title>
 <style>
-  body { font-family: Arial, sans-serif; margin:0; background-color: #e6f9e6; }
-  header { background-color: #2d6a4f; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
-  header img { height: 40px; }
-  header .nav-buttons { display: flex; gap: 10px; }
-  header button { background:#e63946;color:white;border:none;padding:8px 15px;border-radius:5px;cursor:pointer; }
-  header button.market-btn { background:#40916c; }
-  .container { padding:20px; max-width:900px;margin:auto; }
-  h2 { color:#2d6a4f; }
-  input, select { padding:8px;margin:5px 0;width:100%;border-radius:5px;border:1px solid #ccc; }
-  button.add-btn { background:#4CAF50; color:white; border:none; padding:8px 12px; cursor:pointer; margin-top:5px; border-radius:5px; }
-  .product-item { background:white; padding:10px; border-radius:8px; margin:5px 0; display:flex; justify-content: space-between; align-items:center; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
-  .product-item span { margin-right:10px; }
-  .edit-btn { background:#f4a261; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer; margin-right:5px; }
-  .delete-btn { background:#e63946; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer; }
+body { font-family: Arial, sans-serif; margin:0; background-color: #e6f9e6; }
+header { background-color: #2d6a4f; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+header img { height: 40px; }
+header .nav-buttons { display: flex; gap: 10px; }
+header button { background:#e63946;color:white;border:none;padding:8px 15px;border-radius:5px;cursor:pointer; }
+header button.market-btn { background:#40916c; }
+.container { padding:20px; max-width:900px;margin:auto; }
+h2 { color:#2d6a4f; }
+input, select { padding:8px;margin:5px 0;width:100%;border-radius:5px;border:1px solid #ccc; }
+button.add-btn { background:#4CAF50; color:white; border:none; padding:8px 12px; cursor:pointer; margin-top:5px; border-radius:5px; }
+.product-item { background:white; padding:10px; border-radius:8px; margin:5px 0; display:flex; justify-content: space-between; align-items:center; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
+.product-item span { margin-right:10px; }
+.edit-btn { background:#f4a261; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer; margin-right:5px; }
+.delete-btn { background:#e63946; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer; }
 </style>
 </head>
 <body>
@@ -61,110 +61,106 @@
 </div>
 
 <script>
-  // --- Load seller info ---
-  let allSellers = JSON.parse(localStorage.getItem("allSellers")) || [];
-  let currentEmail = localStorage.getItem("currentSellerEmail");
-  let seller = allSellers.find(s => s.email === currentEmail);
+let allSellers = JSON.parse(localStorage.getItem("allSellers")) || [];
+let currentEmail = localStorage.getItem("currentSellerEmail");
+let seller = allSellers.find(s => s.email === currentEmail);
 
-  if (!seller) {
-    seller = { email: currentEmail, products: [] };
-    allSellers.push(seller);
-    localStorage.setItem("allSellers", JSON.stringify(allSellers));
-  }
-  if (!seller.products) seller.products = [];
+if (!seller) {
+  seller = { email: currentEmail, products: [] };
+  allSellers.push(seller);
+  localStorage.setItem("allSellers", JSON.stringify(allSellers));
+}
+if (!seller.products) seller.products = [];
 
-  function loadSeller() {
-    document.getElementById("shopName").value = seller.shopName || "";
-    document.getElementById("shopLocation").value = seller.location || "";
-    document.getElementById("shopEmail").value = seller.email || "";
-    renderProducts();
-  }
+function loadSeller() {
+  document.getElementById("shopName").value = seller.shopName || "";
+  document.getElementById("shopLocation").value = seller.location || "";
+  document.getElementById("shopEmail").value = seller.email || "";
+  renderProducts();
+}
 
-  function saveShopInfo() {
-    seller.shopName = document.getElementById("shopName").value;
-    seller.location = document.getElementById("shopLocation").value;
-    seller.email = document.getElementById("shopEmail").value;
+function saveShopInfo() {
+  seller.shopName = document.getElementById("shopName").value;
+  seller.location = document.getElementById("shopLocation").value;
+  seller.email = document.getElementById("shopEmail").value;
 
-    const index = allSellers.findIndex(s => s.email === currentEmail);
-    if (index >= 0) {
-      allSellers[index] = seller;
-    } else {
-      allSellers.push(seller);
-    }
-    localStorage.setItem("allSellers", JSON.stringify(allSellers));
-    localStorage.setItem("currentSellerEmail", seller.email);
-    alert("Shop info saved!");
-  }
+  const index = allSellers.findIndex(s => s.email === currentEmail);
+  if (index >= 0) allSellers[index] = seller;
+  else allSellers.push(seller);
 
-  function renderProducts() {
-    const list = document.getElementById("productList");
-    list.innerHTML = "";
-    seller.products.forEach((p, index) => {
-      const div = document.createElement("div");
-      div.className = "product-item";
-      div.innerHTML = `
-        <span>${p.type === "Flower" ? "🌹" : "🍎"} ${p.name} - ₹${p.price}</span>
-        <div>
-          <button class="edit-btn" onclick="editProduct(${index})">Edit</button>
-          <button class="delete-btn" onclick="deleteProduct(${index})">Delete</button>
-        </div>
-      `;
-      list.appendChild(div);
-    });
-  }
+  localStorage.setItem("allSellers", JSON.stringify(allSellers));
+  localStorage.setItem("currentSellerEmail", seller.email);
+  alert("Shop info saved!");
+}
 
-  function addProduct() {
-    const type = document.getElementById("productType").value;
-    const name = document.getElementById("productName").value;
-    const price = document.getElementById("productPrice").value;
-    if (!name || !price) { alert("Enter product name and price"); return; }
+function renderProducts() {
+  const list = document.getElementById("productList");
+  list.innerHTML = "";
+  seller.products.forEach((p, index) => {
+    const div = document.createElement("div");
+    div.className = "product-item";
+    div.innerHTML = `
+      <span>${p.type === "Flower" ? "🌹" : "🍎"} ${p.name} - ₹${p.price}</span>
+      <div>
+        <button class="edit-btn" onclick="editProduct(${index})">Edit</button>
+        <button class="delete-btn" onclick="deleteProduct(${index})">Delete</button>
+      </div>
+    `;
+    list.appendChild(div);
+  });
+}
 
-    seller.products.push({ type, name, price });
+function addProduct() {
+  const type = document.getElementById("productType").value;
+  const name = document.getElementById("productName").value;
+  const price = document.getElementById("productPrice").value;
+  if (!name || !price) { alert("Enter product name and price"); return; }
+
+  seller.products.push({ type, name, price });
+  saveSellerToStorage();
+  renderProducts();
+  document.getElementById("productName").value = "";
+  document.getElementById("productPrice").value = "";
+}
+
+function editProduct(i) {
+  const p = seller.products[i];
+  const newName = prompt("Edit product name:", p.name);
+  const newPrice = prompt("Edit product price:", p.price);
+  if (newName !== null && newPrice !== null) {
+    seller.products[i].name = newName;
+    seller.products[i].price = newPrice;
     saveSellerToStorage();
     renderProducts();
-    document.getElementById("productName").value = "";
-    document.getElementById("productPrice").value = "";
   }
+}
 
-  function editProduct(i) {
-    const p = seller.products[i];
-    const newName = prompt("Edit product name:", p.name);
-    const newPrice = prompt("Edit product price:", p.price);
-    if (newName !== null && newPrice !== null) {
-      seller.products[i].name = newName;
-      seller.products[i].price = newPrice;
-      saveSellerToStorage();
-      renderProducts();
-    }
+function deleteProduct(i) {
+  if (confirm("Delete this product?")) {
+    seller.products.splice(i, 1);
+    saveSellerToStorage();
+    renderProducts();
   }
+}
 
-  function deleteProduct(i) {
-    if (confirm("Delete this product?")) {
-      seller.products.splice(i, 1);
-      saveSellerToStorage();
-      renderProducts();
-    }
-  }
+function saveSellerToStorage() {
+  const index = allSellers.findIndex(s => s.email === currentEmail);
+  if (index >= 0) allSellers[index] = seller;
+  else allSellers.push(seller);
+  localStorage.setItem("allSellers", JSON.stringify(allSellers));
+}
 
-  function saveSellerToStorage() {
-    const index = allSellers.findIndex(s => s.email === currentEmail);
-    if (index >= 0) allSellers[index] = seller;
-    else allSellers.push(seller);
-    localStorage.setItem("allSellers", JSON.stringify(allSellers));
-  }
+function goToMarketplace() {
+  window.location.href = "index.html";
+}
 
-  function goToMarketplace() {
-    // ✅ Just go to index.html without logging out
-    window.location.href = "index.html";
-  }
+function logout() {
+  localStorage.removeItem("currentSellerEmail");
+  window.location.href = "logindirec.html";
+}
 
-  function logout() {
-    localStorage.removeItem("currentSellerEmail");
-    window.location.href = "logindirec.html";
-  }
-
-  // --- Initial load ---
-  loadSeller();
+// --- Initial load ---
+loadSeller();
 </script>
 
 </body>
