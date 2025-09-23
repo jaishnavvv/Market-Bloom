@@ -1,52 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard - Market Bloom</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Seller Dashboard - Market Bloom</title>
   <style>
     body {
       font-family: Arial, sans-serif;
+      background-color: #e6f9e6;
+      padding: 50px 20px;
       text-align: center;
-      margin: 50px;
     }
-
     h1 {
-      color: #4CAF50;
+      color: #2d6a4f;
+      margin-bottom: 30px;
     }
-
-    p {
+    #manageShopBtn {
+      display: none;
+      padding: 15px 30px;
       font-size: 18px;
-    }
-
-    button {
-      padding: 10px 20px;
-      background-color: #4CAF50;
-      color: white;
+      border-radius: 8px;
+      background-color: #4caf50;
       border: none;
-      border-radius: 5px;
+      color: white;
       cursor: pointer;
-      font-size: 16px;
-      margin-top: 20px;
+      box-shadow: 0 4px 12px rgba(76,175,80,.5);
+      transition: background-color 0.3s ease;
     }
-
-    button:hover {
-      background-color: #45a049;
+    #manageShopBtn:hover {
+      background-color: #388e3c;
     }
   </style>
 </head>
 <body>
-
-  <h1>Dashboard</h1>
-  <p>Welcome! You are now inside Market Bloom.</p>
-
-  <button onclick="logout()">Logout</button>
+  <h1>Seller Dashboard</h1>
+  <button id="manageShopBtn">Manage Your Shop</button>
 
   <script>
-    function logout() {
-      window.location.href = "buyer-login.html"; // or seller-login.html
-    }
-  </script>
+    window.onload = function() {
+      const currentSellerEmail = localStorage.getItem('currentSellerEmail');
+      const allSellers = JSON.parse(localStorage.getItem('allSellers')) || [];
+      const seller = allSellers.find(s => s.email === currentSellerEmail);
 
+      if (seller) {
+        document.getElementById('manageShopBtn').style.display = 'inline-block';
+        document.getElementById('manageShopBtn').onclick = function() {
+          window.location.href = 'shop-management.html'; // Adjust path to your shop management page
+        };
+      } else {
+        alert('Please login as a seller to access the dashboard.');
+        window.location.href = 'logindirec.html';  // Redirect to login if not logged in as seller
+      }
+    };
+  </script>
 </body>
 </html>
