@@ -111,6 +111,24 @@
   // --- Initial load ---
   loadUser();
   loadShops();
+  window.onload = function() {
+  const currentSellerEmail = localStorage.getItem('currentSellerEmail');
+  const buyerEmail = localStorage.getItem('buyerEmail');
+
+  const editShopButton = document.createElement('button');
+  editShopButton.textContent = 'Edit Your Shop';
+  editShopButton.style.cssText = 'margin: 10px; padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;';
+  
+  if (currentSellerEmail) {
+    // Show edit shop button for seller
+    document.body.prepend(editShopButton); // Add at top or anywhere suitable
+
+    editShopButton.onclick = function() {
+      window.location.href = 'shop-management.html'; // Adjust as needed
+    };
+  }
+};
+
 </script>
 </body>
 </html>
