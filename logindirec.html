@@ -1,105 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login / Sign Up - Market Bloom</title>
-<style>
-  body { font-family: Arial, sans-serif; background-color: #e6f9e6; margin:0; display:flex; justify-content:center; align-items:center; height:100vh; }
-  .container { background:white; padding:20px 30px; border-radius:10px; box-shadow:0 2px 10px rgba(0,0,0,0.2); width:350px; }
-  h2 { text-align:center; color:#2d6a4f; }
-  label { display:block; margin-top:10px; font-weight:bold; }
-  input, select { width:100%; padding:8px; margin-top:5px; border-radius:5px; border:1px solid #ccc; }
-  button { width:100%; padding:10px; margin-top:15px; background:#4CAF50; color:white; border:none; border-radius:5px; cursor:pointer; }
-  button:hover { background:#45a049; }
-  .toggle-btn { background:#2d6a4f; margin-top:10px; }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Market Bloom - Login / Sign Up</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; background-color: #e6f9e6; display: flex; justify-content: center; align-items: center; height: 100vh; }
+    .container { background: white; padding: 20px 30px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 350px; }
+    h2 { text-align: center; color: #2d6a4f; }
+    label { display: block; margin-top: 10px; font-weight: bold; }
+    input, select { width: 100%; padding: 8px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
+    button { width: 100%; padding: 10px; margin-top: 15px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+    button:hover { background: #45a049; }
+    .toggle-btn { background: none; color: #2d6a4f; border: none; cursor: pointer; margin-top: 10px; font-size: 14px; text-decoration: underline; display: block; width: 100%; text-align: center; }
+    .hidden { display: none; }
+  </style>
 </head>
 <body>
+  <div class="container">
+    <h2 id="formTitle">Buyer Signup</h2>
 
-<div class="container">
-  <h2 id="formTitle">Buyer / Seller Login</h2>
-  
-  <label>User Type:</label>
-  <select id="userType">
-    <option value="buyer">Buyer</option>
-    <option value="seller">Seller</option>
-  </select>
+    <label for="userType">User Type</label>
+    <select id="userType">
+      <option value="buyer">Buyer</option>
+      <option value="seller">Seller</option>
+    </select>
 
-  <label>Name:</label>
-  <input type="text" id="name" placeholder="Your Name">
+    <label id="labelName" for="name">Name</label>
+    <input type="text" id="name" placeholder="Your Name" />
 
-  <div id="sellerFields" style="display:none;">
-    <label>Shop Name:</label>
-    <input type="text" id="shopName" placeholder="Shop Name">
-    <label>Location:</label>
-    <input type="text" id="shopLocation" placeholder="Shop Location">
+    <div id="sellerFields" class="hidden">
+      <label for="shopName">Shop Name</label>
+      <input type="text" id="shopName" placeholder="Shop Name" />
+      <label for="shopLocation">Shop Location</label>
+      <input type="text" id="shopLocation" placeholder="Shop Location" />
+    </div>
+
+    <label for="email" id="labelEmail">Email</label>
+    <input type="email" id="email" placeholder="Your Email" />
+
+    <label for="password" id="labelPassword">Password</label>
+    <input type="password" id="password" placeholder="Password" />
+
+    <label for="confirmPassword" id="labelConfirmPassword">Confirm Password</label>
+    <input type="password" id="confirmPassword" placeholder="Confirm Password" />
+
+    <button id="submitBtn">Sign Up</button>
+    <button id="toggleFormBtn" class="toggle-btn">Already have an account? Login here</button>
   </div>
 
-  <label>Email:</label>
-  <input type="email" id="email" placeholder="Email">
+  <script>
+    const userTypeSelect = document.getElementById('userType');
+    const sellerFields = document.getElementById('sellerFields');
+    const formTitle = document.getElementById('formTitle');
+    const submitBtn = document.getElementById('submitBtn');
+    const toggleFormBtn = document.getElementById('toggleFormBtn');
 
-  <label>Password:</label>
-  <input type="password" id="password" placeholder="Password">
+    const nameInput = document.getElementById('name');
+    const shopNameInput = document.getElementById('shopName');
+    const shopLocationInput = document.getElementById('shopLocation');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirmPassword');
 
-  <label>Confirm Password:</label>
-  <input type="password" id="confirmPassword" placeholder="Confirm Password">
+    let formMode = 'signup'; // 'signup' or 'login'
 
-  <button onclick="signup()">Sign Up / Login</button>
-</div>
-
-<script>
-  const userTypeSelect = document.getElementById("userType");
-  const sellerFields = document.getElementById("sellerFields");
-
-  userTypeSelect.addEventListener("change", () => {
-    if (userTypeSelect.value === "seller") sellerFields.style.display = "block";
-    else sellerFields.style.display = "none";
-  });
-
-  function signup() {
-    const type = userTypeSelect.value;
-    const name = document.getElementById("name").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
-    const confirmPassword = document.getElementById("confirmPassword").value;
-
-    if (!name || !email || !password || !confirmPassword) {
-      alert("Fill all fields!");
-      return;
-    }
-    if (password !== confirmPassword) {
-      alert("Passwords do not match!");
-      return;
-    }
-
-    if (type === "buyer") {
-      // Save buyer
-      const buyer = { name, email, password };
-      localStorage.setItem("buyer", JSON.stringify(buyer));
-      window.location.href = "index.html";
-    } else {
-      // Save seller
-      const shopName = document.getElementById("shopName").value.trim();
-      const location = document.getElementById("shopLocation").value.trim();
-      if (!shopName || !location) { alert("Enter shop info"); return; }
-
-      let allSellers = JSON.parse(localStorage.getItem("allSellers")) || [];
-      let existing = allSellers.find(s => s.email === email);
-      if (existing) {
-        alert("Seller already exists, logging in...");
+    userTypeSelect.addEventListener('change', () => {
+      if (userTypeSelect.value === 'seller' && formMode === 'signup') {
+        sellerFields.classList.remove('hidden');
       } else {
-        allSellers.push({ name, email, password, shopName, location, products: [] });
-        localStorage.setItem("allSellers", JSON.stringify(allSellers));
-        alert("Seller account created!");
+        sellerFields.classList.add('hidden');
       }
-      // Set current seller session
-      localStorage.setItem("currentSellerEmail", email);
-      window.location.href = "seller.html";
-    }
-  }
-</script>
+      updateFormTitle();
+    });
 
+    toggleFormBtn.addEventListener('click', () => {
+      if (formMode === 'signup') {
+        formMode = 'login';
+        formTitle.textContent = userTypeSelect.value === 'seller' ? 'Seller Login' : 'Buyer Login';
+        submitBtn.textContent = 'Login';
+
+        nameInput.style.display = 'none';
+        confirmPasswordInput.style.display = 'none';
+        document.getElementById('labelName').style.display = 'none';
+        document.getElementById('labelConfirmPassword').style.display = 'none';
+
+        if (userTypeSelect.value === 'seller') {
+          sellerFields.style.display = 'none';
+        }
+      } else {
+        formMode = 'signup';
+        updateFormTitle();
+        submitBtn.textContent = 'Sign Up';
+
+        nameInput.style.display = 'block';
+        confirmPasswordInput.style.display = 'block';
+        document.getElementById('labelName').style.display = 'block';
+        document.getElementById('labelConfirmPassword').style.display = 'block';
+
+        if (userTypeSelect.value === 'seller') {
+          sellerFields.style.display = 'block';
+        }
+      }
+    });
+
+    function updateFormTitle() {
+      formTitle.textContent = formMode === 'signup'
+        ? (userTypeSelect.value === 'seller' ? 'Seller Signup' : 'Buyer Signup')
+        : (userTypeSelect.value === 'seller' ? 'Seller Login' : 'Buyer Login');
+    }
+
+    submitBtn.addEventListener('click', () => {
+      const userType = userTypeSelect.value;
+      const name = nameInput.value.trim();
+      const shopName = shopNameInput.value.trim();
+      const shopLocation = shopLocationInput.value.trim();
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+      const confirmPassword = confirmPasswordInput.value;
+
+      if (formMode === 'signup') {
+        if (!name || !email || !password || !confirmPassword) {
+          alert('Please fill all required fields.');
+          return;
+        }
+        if (password !== confirmPassword) {
+          alert('Passwords do not match.');
+          return;
+        }
+        if (userType === 'seller' && (!shopName || !shopLocation)) {
+          alert('Please fill all seller fields.');
+          return;
+        }
+
+        if (userType === 'buyer') {
+          const buyer = { name, email, password };
+          localStorage.setItem('buyer', JSON.stringify(buyer));
+          localStorage.setItem('buyerEmail', email);
+          alert('Buyer signed up successfully!');
+          window.location.href = 'index.html';
+        } else {
+          let allSellers = JSON.parse(localStorage.getItem('allSellers')) || [];
+          if (allSellers.find(s => s.email === email)) {
+            alert('Seller email already exists.');
+            return;
+          }
+          allSellers.push({ sellerName: name, shopName, shopLocation, email, password });
+          localStorage.setItem('allSellers', JSON.stringify(allSellers));
+          localStorage.setItem('currentSellerEmail', email);
+          alert('Seller signed up successfully!');
+          window.location.href = 'seller.html';
+        }
+      } else {
+        if (!email || !password) {
+          alert('Please enter both email and password.');
+          return;
+        }
+
+        if (userType === 'buyer') {
+          const buyerData = JSON.parse(localStorage.getItem('buyer'));
+          if (!buyerData || buyerData.email !== email || buyerData.password !== password) {
+            alert('Invalid email or password for buyer.');
+            return;
+          }
+          alert('Buyer logged in successfully!');
+          localStorage.setItem('buyerEmail', email);
+          window.location.href = 'index.html';
+        } else {
+          const allSellers = JSON.parse(localStorage.getItem('allSellers')) || [];
+          const seller = allSellers.find(s => s.email === email && s.password === password);
+          if (!seller) {
+            alert('Invalid email or password for seller.');
+            return;
+          }
+          alert('Seller logged in successfully!');
+          localStorage.setItem('currentSellerEmail', email);
+          window.location.href = 'seller.html';
+        }
+      }
+    });
+
+    // Hide seller fields initially if user is buyer
+    if (userTypeSelect.value === 'buyer') {
+      sellerFields.classList.add('hidden');
+    }
+  </script>
 </body>
 </html>
-
