@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -19,6 +19,9 @@
   .profile-content { display: none; position: absolute; right: 0; background: white; min-width: 200px; box-shadow: 0px 4px 8px rgba(0,0,0,0.2); border-radius: 8px; z-index: 1; color: black; padding: 10px; }
   .profile-dropdown:hover .profile-content { display: block; }
   .logout-btn { background: #e63946; color: white; padding: 8px 10px; border: none; border-radius: 5px; cursor: pointer; width: 100%; margin-top: 10px; }
+  button.header-btn { margin-left:10px; padding: 8px 15px; border-radius:5px; border:none; cursor:pointer; font-weight:bold; }
+  button.marketplace-btn { background:#40916c; color:white; }
+  button.edit-shop-btn { background:#4CAF50; color:white; }
 </style>
 </head>
 <body>
@@ -39,96 +42,97 @@
 <div class="shop-list" id="shopList"></div>
 
 <script>
-  // --- Buyer login/profile ---
-  function loadUser() {
-    let buyer = JSON.parse(localStorage.getItem("buyer"));
-    const userSection = document.getElementById("userSection");
+function loadUser() {
+  const userSection = document.getElementById("userSection");
+  const buyer = JSON.parse(localStorage.getItem("buyer"));
+  const currentSellerEmail = localStorage.getItem("currentSellerEmail");
+  const allSellers = JSON.parse(localStorage.getItem("allSellers")) || [];
+  let seller = allSellers.find(s => s.email === currentSellerEmail);
 
-    if (buyer) {
-      userSection.innerHTML = `
-        <div class="profile-dropdown">
-          <span class="profile-btn">👤 ${buyer.name}</span>
-          <div class="profile-content">
-            <p><b>Name:</b> ${buyer.name}</p>
-            <p><b>Email:</b> ${buyer.email}</p>
-            <button class="logout-btn" onclick="logout()">Logout</button>
-          </div>
+  if (buyer) {
+    // Buyer profile
+    userSection.innerHTML = `
+      <div class="profile-dropdown">
+        <span class="profile-btn">👤 ${buyer.name}</span>
+        <div class="profile-content">
+          <p><b>Name:</b> ${buyer.name}</p>
+          <p><b>Email:</b> ${buyer.email}</p>
+          <button class="logout-btn" onclick="logout()">Logout</button>
         </div>
-      `;
-    } else {
-      userSection.innerHTML = `<a href="logindirec.html" class="login-btn">Login / Sign Up</a>`;
-    }
+      </div>
+    `;
+  } else if (seller) {
+    // Seller header: Marketplace + Edit Shop
+    userSection.innerHTML = `
+      <button class="header-btn marketplace-btn" onclick="goToMarketplace()">Marketplace</button>
+      <button class="header-btn edit-shop-btn" onclick="editShop()">Edit Your Shop</button>
+      <button class="header-btn" onclick="logoutSeller()">Logout</button>
+    `;
+  } else {
+    // Default login
+    userSection.innerHTML = `<a href="logindirec.html" class="login-btn">Login / Sign Up</a>`;
   }
+}
 
-  function logout() {
-    localStorage.removeItem("buyer");
-    loadUser();
-  }
-
-  // --- Load sellers and their products ---
-  function loadShops() {
-    const shopList = document.getElementById("shopList");
-    shopList.innerHTML = "";
-
-    let allSellers = JSON.parse(localStorage.getItem("allSellers")) || [];
-
-    allSellers.forEach(seller => {
-      if (!seller.shopName || !seller.products) return;
-
-      const card = document.createElement("div");
-      card.className = "shop-card";
-
-      let productsHTML = "";
-      seller.products.forEach(p => {
-        productsHTML += `<p>${p.type === "Flower" ? "🌹" : "🍎"} ${p.name} - ₹${p.price}</p>`;
-      });
-
-      card.innerHTML = `
-        <h3>${seller.shopName}</h3>
-        ${productsHTML}
-        <p><b>Location:</b> ${seller.location}</p>
-      `;
-      shopList.appendChild(card);
-    });
-  }
-
-  // --- Search filter ---
-  document.getElementById("searchBox").addEventListener("keyup", function() {
-    const filter = this.value.toLowerCase();
-    document.querySelectorAll(".shop-card").forEach(shop => {
-      shop.style.display = shop.innerText.toLowerCase().includes(filter) ? "" : "none";
-    });
-  });
-
-  // --- Live updates from other tabs ---
-  window.addEventListener("storage", function(e) {
-    if (e.key === "allSellers") loadShops();
-  });
-
-  // --- Auto-refresh for same tab updates ---
-  setInterval(loadShops, 2000);
-
-  // --- Initial load ---
+function logout() {
+  localStorage.removeItem("buyer");
   loadUser();
-  loadShops();
-  window.onload = function() {
-  const currentSellerEmail = localStorage.getItem('currentSellerEmail');
-  const buyerEmail = localStorage.getItem('buyerEmail');
+}
 
-  const editShopButton = document.createElement('button');
-  editShopButton.textContent = 'Edit Your Shop';
-  editShopButton.style.cssText = 'margin: 10px; padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;';
-  
-  if (currentSellerEmail) {
-    // Show edit shop button for seller
-    document.body.prepend(editShopButton); // Add at top or anywhere suitable
+function logoutSeller() {
+  localStorage.removeItem("currentSellerEmail");
+  window.location.href = "logindirec.html";
+}
 
-    editShopButton.onclick = function() {
-      window.location.href = 'seller.html'; // Adjust as needed
-    };
-  }
-};
+function goToMarketplace() {
+  window.location.reload(); // just reload marketplace
+}
 
+function editShop() {
+  window.location.href = "seller.html";
+}
+
+// --- Load sellers & products ---
+function loadShops() {
+  const shopList = document.getElementById("shopList");
+  shopList.innerHTML = "";
+  const allSellers = JSON.parse(localStorage.getItem("allSellers")) || [];
+
+  allSellers.forEach(seller => {
+    if (!seller.shopName || !seller.products) return;
+
+    const card = document.createElement("div");
+    card.className = "shop-card";
+
+    let productsHTML = "";
+    seller.products.forEach(p => {
+      productsHTML += `<p>${p.type === "Flower" ? "🌹" : "🍎"} ${p.name} - ₹${p.price}</p>`;
+    });
+
+    card.innerHTML = `
+      <h3>${seller.shopName}</h3>
+      ${productsHTML}
+      <p><b>Location:</b> ${seller.location}</p>
+    `;
+    shopList.appendChild(card);
+  });
+}
+
+// --- Search filter ---
+document.getElementById("searchBox").addEventListener("keyup", function() {
+  const filter = this.value.toLowerCase();
+  document.querySelectorAll(".shop-card").forEach(shop => {
+    shop.style.display = shop.innerText.toLowerCase().includes(filter) ? "" : "none";
+  });
+});
+
+// Live updates & auto-refresh
+window.addEventListener("storage", e => { if(e.key === "allSellers") loadShops(); });
+setInterval(loadShops, 2000);
+
+// --- Initial load ---
+loadUser();
+loadShops();
 </script>
 </body>
 </html>
